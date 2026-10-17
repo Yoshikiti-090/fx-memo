@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ポンド円メモ</title>
+<style>
+:root{
+  /* 縦1列のスマホ用。上から：今の値段 → 前に開いてから → 大きく動いた日 → 予定 → 見出し */
+  --bg:#F3F4F1; --card:#FFFFFF; --ink:#1B2230; --muted:#5E6675; --line:#DADDD8; --soft:#E9ECE6;
+  --accent:#1F4E79; --up:#7A4A0E; --up-soft:#F6EBDA; --down:#145A5A; --down-soft:#DCEFEC; --new:#9B2C4B;
+  --font:"Hiragino Sans","Noto Sans JP",system-ui,-apple-system,sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#11151C; --card:#191E27; --ink:#E6E9EE; --muted:#9AA2AF; --line:#2A313C; --soft:#222934;
+    --accent:#8DB7E2; --up:#F0C27A; --up-soft:#3A2C17; --down:#7FD1C7; --down-soft:#173331; --new:#F08AA5;
+    color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.7;
+  padding-block:20px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:640px;margin:0 auto}
+a{color:var(--accent)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.top h1{font-size:15px;margin:0;letter-spacing:.08em;color:var(--muted)}
+.muted{color:var(--muted);font-size:13px}
+.now{margin-top:10px}
+.pair{font-size:20px;font-weight:700} .pair span{font-size:12px;color:var(--muted);margin-left:8px;letter-spacing:.06em}
+.price{font-size:44px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:4px}
+.price small{font-size:18px;margin-left:4px}
+.chg{font-size:14px;margin-top:6px;font-variant-numeric:tabular-nums}
+.move{display:inline-block;font-weight:700;font-size:13px;padding:1px 8px;border-radius:4px;margin-right:6px;font-variant-numeric:tabular-nums}
+.move.up{background:var(--up-soft);color:var(--up)} .move.down{background:var(--down-soft);color:var(--down)}
+.since{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:14px}
+.since b{color:var(--new)}
+h2{font-size:17px;margin:30px 0 10px;padding-top:16px;border-top:1px solid var(--line);text-wrap:balance}
+.h-sub{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+h4{font-size:13px;margin:12px 0 4px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.day{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.day-h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.date{font-weight:700;font-variant-numeric:tabular-nums}
+ul{list-style:none;margin:0;padding:0}
+.hls li{padding:8px 0;border-bottom:1px solid var(--soft);min-width:0}
+.hls li:last-child{border-bottom:0}
+.hls a{display:block;text-decoration:none;color:var(--ink);font-size:14px;line-height:1.55}
+.hls a:hover{text-decoration:underline}
+.when,.src{font-size:12px;color:var(--muted);margin-right:8px;font-variant-numeric:tabular-nums}
+.hl.new a::before,.day.new .date::before{content:"新";display:inline-block;font-size:11px;font-weight:700;color:var(--new);border:1px solid var(--new);border-radius:3px;padding:0 4px;margin-right:6px;line-height:1.4}
+.plan li{display:grid;gap:2px;padding:8px 0;border-bottom:1px solid var(--soft)}
+.sim-lead{font-size:14px;margin:4px 0}
+.tbl{overflow-x:auto}
+.sim{border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;width:100%}
+.sim th,.sim td{text-align:left;padding:5px 8px 5px 0;border-bottom:1px solid var(--soft);vertical-align:top}
+.sim th{white-space:nowrap}
+.sim th{color:var(--muted);font-weight:600}
+footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer p{margin:4px 0}
+</style></head>
+<body><div class="wrap">
+  <div class="top"><h1>ポンド円メモ</h1><span class="muted">更新 10/17 00:36</span></div>
+  
+  <section class="holding">
+    <div class="now">
+      <div class="pair">ポンド円<span>GBP/JPY</span></div>
+      <div class="price">210.72<small>円</small></div>
+      <div class="chg"><span class="move up">▲ 円安（ポンド高）</span>
+        前の日から +1.45円（+0.7%）・1週間で +0.7%</div>
+      <p class="muted">10/16（金）の基準の値段（欧州中央銀行・日本時間の夜11時ごろ）。ふだんの1日の動きは 0.3% ほど（直近1年の真ん中の値）。</p>
+    </div>
+
+    <div class="since" id="since" hidden></div>
+
+    <h2>大きく動いた日<span class="h-sub">直近30日・1日で1.0%以上</span></h2>
+    
+    <article class="day" data-ts="2026-09-18T23:59:59+09:00">
+      <header class="day-h"><span class="date">9/18（金）</span>
+        <span class="move up">▲ 円安（ポンド高） +1.2%</span>
+        <span class="muted">208.26 → 210.69円</span></header>
+      <h4>同じ日の見出し</h4><ul class="hls"><li class="muted">この日の見出しは保存されていません（見出しはツールを動かし始めた日から貯まります）</li></ul>
+      <h4>過去に似た動きと、その後</h4><p class="sim-lead">1999年からの過去に、1日で1.0%〜1.6%上がった日は <b>319回</b>。その後：</p><div class="tbl"><table class="sim"><tr><th>1日後</th><td>戻った <b>160</b>回</td><td>続いた <b>159</b>回</td><td>真ん中の値 -0.01%</td></tr><tr><th>1週間後</th><td>戻った <b>140</b>回</td><td>続いた <b>179</b>回</td><td>真ん中の値 +0.16%</td></tr></table></div>
+    </article>
+
+    <h2>これからの予定</h2>
+    <ul class="plan"><li><span class="date">10/30（金） 昼ごろ</span><span>日銀の金融政策の発表（10/29〜30の会合）と展望レポート</span><span class="muted">あと13日・<a href="https://www.boj.or.jp/mopo/mpmsche_minu/index.htm" target="_blank" rel="noopener">日銀の公表</a></span></li><li><span class="date">11/5（木） 21:00ごろ</span><span>英中銀の金利の発表</span><span class="muted">あと19日・<a href="https://www.bankofengland.co.uk/news/2024/december/mpc-dates-for-2026" target="_blank" rel="noopener">英中銀の公表</a></span></li><li><span class="date">12/17（木） 21:00ごろ</span><span>英中銀の金利の発表</span><span class="muted">あと61日・<a href="https://www.bankofengland.co.uk/news/2024/december/mpc-dates-for-2026" target="_blank" rel="noopener">英中銀の公表</a></span></li><li><span class="date">12/18（金） 昼ごろ</span><span>日銀の金融政策の発表（12/17〜18の会合）</span><span class="muted">あと62日・<a href="https://www.boj.or.jp/mopo/mpmsche_minu/index.htm" target="_blank" rel="noopener">日銀の公表</a></span></li></ul>
+
+    <h2>最近の出来事の見出し<span class="h-sub">直近7日</span></h2>
+    <ul class="hls"><li class="hl" data-ts="2026-10-16T13:49:26+00:00"><a href="https://news.google.com/rss/articles/CBMib0FVX3lxTFA4dDU3YkxjVjluOWc0M1Z3eU9GUlhnRkF5U2oxbF9wNXRSVGxoSnVMeTNsTzNYdXAxeFVpQmQzdTVsOW9fdDUzMjRNUVduM3cwN2IwR3VhTHdTWDg0TU82ckNVSU8zeDloOVJKZU9TZ9IBdEFVX3lxTE9mNllrdVFCVXJCX2NNaHd3ZkZ2MUU4Qjdvcy1uN29qai1wWDRfQTd0cndPWmw5TS1VYl8wZkFSbUY3dldILTJEcGNaQV9xTUpGNWgyOXJKTGlubjJLZGFlc0JRLWQzTk5ibm9IeV9DblYzVUxw?oc=5" target="_blank" rel="noopener">日銀総裁、利上げ姿勢維持　エネルギー価格、AI需要を注視</a><span class="when">10/16 22:49</span><span class="src">Infoseek</span></li><li class="hl" data-ts="2026-10-16T13:17:20+00:00"><a href="https://news.google.com/rss/articles/CBMiXEFVX3lxTE9TcGlId0dHbTNuYjF6T1hxc1NFTE9CbHBUckFrbklCS05NdUxyNTNlQUxNTHJDdEpDU21KdFJwZFpfLXRkbGtMT3c0WnpUUDlUaXI4YjAyYjUtdlBv?oc=5" target="_blank" rel="noopener">日銀・植田総裁 基調物価「これ以上上がること容認できない」 利上げを継続する姿勢強調｜Infoseekニュース</a><span class="when">10/16 22:17</span><span class="src">Infoseek</span></li><li class="hl" data-ts="2026-10-16T13:02:45+00:00"><a href="https://news.google.com/rss/articles/CBMia0FVX3lxTFBUMlVUZGROU1pyc1lqNFhkcTQ4aG1SaURNYnZZQ1RfMFA2bjFYcTlwSzgwZDRpc2xBcFg2R2xIVE5wWmEtcXN2R21QbnRYRnRSSDhDSnhhQTB6bTJ3NlpVZDZoNnc0bDRQWjk00gFrQVVfeXFMUFQyVVRkZE5TWnJzWWo0WGRxNDhobVJpRE1idllDVF8wUDZuMVhxOXBLODBkNGlzbEFwWDZHbEhUTnBaYS1xc3ZHbVBudFhGdFJIOENKeGFBMHptMnc2WlVkNmg2dzRsNFBaOTQ?oc=5" target="_blank" rel="noopener">植田日銀総裁、物価上振れ「容認できず」＝２％目標に接近、利上げ継続</a><span class="when">10/16 22:02</span><span class="src">Infoseek</span></li><li class="hl" data-ts="2026-10-16T12:56:42+00:00"><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxQMjc5XzN1U3FyeDM3X3hvSGNJYXBiQmtWdEtOenZhekhWR1JnZnBnREpWbnctQ0lQTWVYZkh5UmptN3BIM2Yyc3ZSaVFSMzlkdHFPdlZPUDdBTmpaWkNqWThidkE0dVR2RHZoa2k1SElTU1FtaUwyZEloU0VHbEtKNzZzOHEwT3NlaXprNXMyU2c?oc=5" target="_blank" rel="noopener">基調物価2％の判断、10月会合でしっかり議論 経済は見通し通り＝日銀総裁</a><span class="when">10/16 21:56</span><span class="src">Reuters</span></li><li class="hl" data-ts="2026-10-16T12:25:00+00:00"><a href="https://news.google.com/rss/articles/CBMidEFVX3lxTE51RHRZdHB4cXhLbUw1V2Y4RHpkcGdSS0U5RlRLNjJjLVotME9vTGU1czAtbEVwZnlRYWYzYTJ3SEdlbkdCTFVTMDg5clpWYW9DWTI1WGI4RlV6eHphMVdhMXZHOVF4TkJ5TnVReDNOTWRDLWdO?oc=5" target="_blank" rel="noopener">日銀総裁、基調物価2％接近でも金融環境は緩和的と指摘 利上げ継続方針</a><span class="when">10/16 21:25</span><span class="src">BigGo ファイナンス</span></li><li class="hl" data-ts="2026-10-16T12:04:50+00:00"><a href="https://news.google.com/rss/articles/CBMiS0FVX3lxTFBtQUFxNklEOWotVE11TTRUNTlfQ1NJVlhoY0ltUXRqYkZzX1FhRDlKSHlQcFR1Z3ZFVzQtVE5QUXpxSVpjbzAyWEVkNA?oc=5" target="_blank" rel="noopener">【速報】日本経済は見通し通りに推移と日銀総裁</a><span class="when">10/16 21:04</span><span class="src">47NEWS</span></li><li class="hl" data-ts="2026-10-16T12:03:18+00:00"><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNNVhwQzdWUUxrNDFKOTVnRnFFZ1RWQWNVSGs0QlhGb0dYMHE5SVRXdnBTYV9zQk5GTWtUeGVxRlRJOHQxWU1UWjc5dlUtMmVGZmswTTMwTThRd296SkZUd1ZDa1lyQnA4dDA5UjBuT1dkQUxzTG5QT20wdmMwN09BcVFtSjlLdlU?oc=5" target="_blank" rel="noopener">【要人発言】日銀総裁「基調物価が2％に近づく中で、金融政策環境は緩和的」(トレーダーズ・ウェブ)</a><span class="when">10/16 21:03</span><span class="src">Yahoo!ファイナンス</span></li><li class="hl" data-ts="2026-10-16T09:47:00+00:00"><a href="https://news.google.com/rss/articles/CBMidEFVX3lxTE51aGJKakVia0hIQXY0NmJYUXI0d0lqSGZjRWlOMDBHQjJmcS1EZVpWRkplVl80YXJnYkhTMlFJdERnVUFNTW1BUlhtYnI1UlZ1VFMwMFh1WW04YVp4SW5QN2JCZ0loUVhCVmhkczYxbHBBYmJ2?oc=5" target="_blank" rel="noopener">植田日銀総裁､利上げ継続姿勢示す発言に変化なし―全国信用組合大会</a><span class="when">10/16 18:47</span><span class="src">TBS NEWS DIG</span></li></ul>
+
+    <h2>他の人の見方<span class="h-sub">出典つき・このページの予想ではありません</span></h2>
+    <ul class="hls"><li class="hl" data-ts="2026-10-14T08:34:47+00:00"><a href="https://news.google.com/rss/articles/CBMifkFVX3lxTE00MUdadkZFakJGT1Rzc09jTkt2TEZQYmVzRks3Tko1LWdmZ3dqOTZCdlZoY0dEUlVtV3h0elFRelVSWHd5TjRHazJvaEx5OUlBQklFU183TmU1YlU5UVNGOFhPT25iMHpaZk1nNGswb1BjTWs2MVhlNTNKRWpOUQ?oc=5" target="_blank" rel="noopener">英中銀「今後1年で利上げ4回」の市場観測、ピル委員が懐疑的見方示す</a><span class="when">10/14 17:34</span><span class="src">Reuters</span></li><li class="hl" data-ts="2026-10-13T08:58:32+00:00"><a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE9pMHAtSG5sc1Z2RTA5aDVScnB2MGg2Y0dBbTFQN3dsQ255N0hBX3hXNWlnTkk3ZDNvdmI1Uk1tUmRRbFRFdlZHWXhxYjFVT0pSV3hWekNoNkNlMmNmd1Nn?oc=5" target="_blank" rel="noopener">日銀の利上げペースは加速している？ 背景とリスクシナリオを解説 野村證券・岡崎康平</a><span class="when">10/13 17:58</span><span class="src">野村證券</span></li><li class="hl" data-ts="2026-10-13T02:07:00+00:00"><a href="https://news.google.com/rss/articles/CBMifkFVX3lxTE5BVWdKejh2bWFMNXRkay1Ld2dBZ3F5RE9OSEh2YmxQS2dmRHNLNEFnNXJqYW9iV3dqUFpGMGRJS29ULWlaM1Q2WmVSY1paQVJRVHJsLVVadHAtcXdEdGNqQmc2ODQzVk53a3lmdmtjVWhkR2N5QjJTaTdleE0zZw?oc=5" target="_blank" rel="noopener">日銀、中立水準に段階的利上げへ 成長減速見通しでも＝ＩＭＦ</a><span class="when">10/13 11:07</span><span class="src">Reuters</span></li></ul>
+  </section>
+  <footer>
+    <p>このページは、起きたことと過去の数字を並べるだけです。売り買いを勧めるものではありません。判断はご自身でしてください。</p>
+    <p>値段：<a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行の基準レート、1999年から）。見出し：Google ニュース（各見出しの出典へリンク）。予定：英中銀・日銀の公表。</p>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY="fxmemo:lastVisit", last=null;
+  try{ last=localStorage.getItem(KEY); }catch(_){}
+  var box=document.getElementById("since");
+  if(last){
+    var newDays=0,newHl=0;
+    document.querySelectorAll("[data-ts]").forEach(function(el){
+      if(new Date(el.getAttribute("data-ts"))>new Date(last)){
+        el.classList.add("new");
+        if(el.classList.contains("day")) newDays++; else newHl++;
+      }
+    });
+    var t=new Date(last);
+    var when=(t.getMonth()+1)+"/"+t.getDate()+" "+String(t.getHours()).padStart(2,"0")+":"+String(t.getMinutes()).padStart(2,"0");
+    if(box){
+      box.textContent="";
+      var s=document.createElement("span");
+      s.innerHTML="前に開いた "+when+" から：大きく動いた日 <b>"+newDays+"</b>日・新しい見出し <b>"+newHl+"</b>本（「新」の印）";
+      box.appendChild(s); box.hidden=false;
+    }
+  }
+  try{ localStorage.setItem(KEY,new Date().toISOString()); }catch(_){}
+})();
+</script>
+</body></html>

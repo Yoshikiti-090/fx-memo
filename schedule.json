@@ -1,0 +1,9 @@
+{
+  "_説明": "決まった予定。年に1回、公式の発表を見て手で足す。time は日本時間の目安。",
+  "events": [
+    {"date": "2026-10-30", "time": "昼ごろ", "title": "日銀の金融政策の発表（10/29〜30の会合）と展望レポート", "source": "日銀", "url": "https://www.boj.or.jp/mopo/mpmsche_minu/index.htm"},
+    {"date": "2026-11-05", "time": "21:00ごろ", "title": "英中銀の金利の発表", "source": "英中銀", "url": "https://www.bankofengland.co.uk/news/2024/december/mpc-dates-for-2026"},
+    {"date": "2026-12-17", "time": "21:00ごろ", "title": "英中銀の金利の発表", "source": "英中銀", "url": "https://www.bankofengland.co.uk/news/2024/december/mpc-dates-for-2026"},
+    {"date": "2026-12-18", "time": "昼ごろ", "title": "日銀の金融政策の発表（12/17〜18の会合）", "source": "日銀", "url": "https://www.boj.or.jp/mopo/mpmsche_minu/index.htm"}
+  ]
+}

@@ -17,8 +17,8 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: python run.py
@@ -29,7 +29,18 @@ jobs:
           git add data docs
           if git diff --cached --quiet; then
             echo "変化なし"
-          else
-            git commit -m "データとページを更新"
-            git push
+            exit 0
           fi
+          git commit -m "データとページを更新"
+          # 待たされている間に別の回が先に保存していたら、最新を取り込んで作り直してから送る
+          for n in 1 2 3; do
+            git push && exit 0
+            echo "先に別の回が保存していたので、最新を取り込んで作り直します（${n}回目）"
+            git fetch origin main
+            git reset --hard origin/main
+            python run.py
+            git add data docs
+            git diff --cached --quiet && exit 0
+            git commit -m "データとページを更新"
+          done
+          exit 1

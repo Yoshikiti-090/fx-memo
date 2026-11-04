@@ -5,6 +5,8 @@
 """
 import json
 import os
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -15,10 +17,17 @@ UA = "fxmemo/0.1 (personal use)"
 FIRST_DAY = "1999-01-04"  # 欧州中央銀行の基準レートが始まった日
 
 
-def _get(url, timeout=30):
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+def _get(url, timeout=30, tries=3):
+    """相手が一時的に応えない時（522・時間切れなど）は、少し待って取り直す。"""
+    for n in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read()
+        except (urllib.error.URLError, TimeoutError):
+            if n == tries - 1:
+                raise
+            time.sleep(10 * (n + 1))
 
 
 def _path(data_dir, holding, kind):
@@ -38,7 +47,14 @@ def update_rates(data_dir, holding):
         start = (date.fromisoformat(max(saved)) - timedelta(days=7)).isoformat()
     url = (f"https://api.frankfurter.dev/v1/{start}..?"
            + urllib.parse.urlencode({"base": holding["base"], "symbols": holding["quote"]}))
-    body = json.loads(_get(url))
+    try:
+        body = json.loads(_get(url))
+    except Exception as e:
+        if not saved:
+            raise
+        # 取り先が落ちていても、保存済みの値段でページは作る（次の回に取り直す）
+        print(f"  ！ 値段の取得に失敗したので、保存済みの値段を使います: {e}")
+        return sorted(saved.items())
     for day, v in body.get("rates", {}).items():
         saved[day] = v[holding["quote"]]
     with open(path, "w", encoding="utf-8") as f:
